@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支付成功 - Nano Banana AI</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .payment-success {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .success-card {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: checkmark 0.8s ease-out 0.3s both;
+        }
+        
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .success-icon::after {
+            content: '✓';
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+        
+        .success-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1f36;
+            margin-bottom: 15px;
+        }
+        
+        .success-message {
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .payment-details {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .detail-value {
+            color: #6b7280;
+        }
+        
+        .credits-highlight {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f8fafc;
+            color: #6b7280;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #6b7280;
+        }
+        
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-state {
+            color: #ef4444;
+        }
+        
+        .error-state .success-icon {
+            background: #ef4444;
+        }
+        
+        .error-state .success-icon::after {
+            content: '✕';
+        }
+        
+        @media (max-width: 768px) {
+            .success-card {
+                padding: 40px 25px;
+                margin: 20px;
+            }
+            
+            .success-title {
+                font-size: 28px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-success">
+        <div class="success-card">
+            <!-- 加载状态 -->
+            <div id="loadingState" class="loading">
+                <div class="spinner"></div>
+                <span>正在处理您的支付...</span>
+            </div>
+            
+            <!-- 成功状态 -->
+            <div id="successState" style="display: none;">
+                <div class="success-icon"></div>
+                <h1 class="success-title">支付成功！</h1>
+                <p class="success-message" id="successMessage">
+                    感谢您的购买，您的账户已成功升级。
+                </p>
+                
+                <div class="payment-details" id="paymentDetails">
+                    <!-- 支付详情将通过JavaScript填充 -->
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="/" class="btn btn-primary">开始创作</a>
+                    <a href="/account" class="btn btn-secondary">查看账户</a>
+                </div>
+            </div>
+            
+            <!-- 错误状态 -->
+            <div id="errorState" class="error-state" style="display: none;">
+                <div class="success-icon"></div>
+                <h1 class="success-title">支付处理失败</h1>
+                <p class="success-message" id="errorMessage">
+                    很抱歉，支付处理过程中出现了问题。请联系客服或重试。
+                </p>
+                
+                <div class="action-buttons">
+                    <a href="/pricing" class="btn btn-primary">重新购买</a>
+                    <a href="/contact" class="btn btn-secondary">联系客服</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/stripe-manager.js"></script>
+    <script>
+        class PaymentSuccessHandler {
+            constructor() {
+                this.sessionId = this.getSessionIdFromUrl();
+                this.init();
+            }
+            
+            getSessionIdFromUrl() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('session_id');
+            }
+            
+            async init() {
+                if (!this.sessionId) {
+                    this.showError('缺少支付会话ID');
+                    return;
+                }
+                
+                try {
+                    // 处理支付成功
+                    const result = await window.stripeManager.handlePaymentSuccess(this.sessionId);
+                    this.showSuccess(result);
+                } catch (error) {
+                    console.error('Payment success handling failed:', error);
+                    this.showError(error.message || '支付处理失败');
+                }
+            }
+            
+            showSuccess(result) {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('successState').style.display = 'block';
+                
+                // 更新成功消息
+                const messageEl = document.getElementById('successMessage');
+                if (result.type === 'subscription') {
+                    messageEl.textContent = `恭喜！您已成功订阅 ${result.planName}，现在可以开始创作了。`;
+                } else if (result.type === 'credits') {
+                    messageEl.textContent = `太棒了！您已成功购买 ${result.credits} 积分，现在可以生成更多精美图片了。`;
+                }
+                
+                // 填充支付详情
+                this.fillPaymentDetails(result);
+            }
+            
+            showError(message) {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorMessage').textContent = message;
+            }
+            
+            fillPaymentDetails(result) {
+                const detailsEl = document.getElementById('paymentDetails');
+                let detailsHTML = '';
+                
+                if (result.type === 'subscription') {
+                    detailsHTML = `
+                        <div class="detail-row">
+                            <span class="detail-label">订阅计划</span>
+                            <span class="detail-value">${result.planName}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">月度积分</span>
+                            <span class="detail-value credits-highlight">${result.credits} 积分</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">计费周期</span>
+                            <span class="detail-value">每月自动续费</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">支付状态</span>
+                            <span class="detail-value" style="color: #10b981;">✓ 已完成</span>
+                        </div>
+                    `;
+                } else if (result.type === 'credits') {
+                    detailsHTML = `
+                        <div class="detail-row">
+                            <span class="detail-label">购买类型</span>
+                            <span class="detail-value">积分包</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">获得积分</span>
+                            <span class="detail-value credits-highlight">${result.credits} 积分</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">支付方式</span>
+                            <span class="detail-value">一次性付款</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">支付状态</span>
+                            <span class="detail-value" style="color: #10b981;">✓ 已完成</span>
+                        </div>
+                    `;
+                }
+                
+                detailsEl.innerHTML = detailsHTML;
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            new PaymentSuccessHandler();
+        });
+    </script>
+</body>
+</html>

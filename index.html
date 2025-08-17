@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nano Banana - AI-powered image generation service. Create stunning images from text descriptions or transform existing images with advanced AI models.">
+    <meta name="keywords" content="AI image generation, text to image, image to image, artificial intelligence, creative tools">
+    <meta name="author" content="Nano Banana">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Nano Banana - AI Image Generation">
+    <meta property="og:description" content="Create stunning AI-generated images from text descriptions or transform existing images with our advanced AI models.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nanobanana.com">
+    <meta property="og:image" content="https://nanobanana.com/assets/og-image.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Nano Banana - AI Image Generation">
+    <meta name="twitter:description" content="Create stunning AI-generated images from text descriptions or transform existing images.">
+    <meta name="twitter:image" content="https://nanobanana.com/assets/twitter-image.jpg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://nanobanana.com">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <title>Nano Banana - AI Image Generation | Create Stunning Images with AI</title>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-brand">
+                <img src="assets/logo.svg" alt="Nano Banana Logo" class="logo">
+                <span class="brand-name">Nano Banana</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+                <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+            </div>
+            
+            <div class="nav-user">
+                <div class="user-credits" id="userCredits" style="display: none;">
+                    <span class="credits-count">0</span> <span class="credits-label">credits</span>
+                </div>
+                <button class="btn-login" id="loginBtn">Sign In</button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle mobile menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Create Stunning AI Images in Seconds</h1>
+                <p class="hero-subtitle">Transform your ideas into beautiful visuals with our advanced AI image generation technology. No design skills required.</p>
+                
+                <div class="hero-cta">
+                    <button class="hero-cta-btn" id="heroCTABtn">Start Creating Now</button>
+                    <p class="hero-cta-text">Try it free - no signup required</p>
+                </div>
+                
+                <div class="trust-badges">
+                    <span class="trust-badge">No Credit Card Required</span>
+                    <span class="trust-badge">5 Free Generations</span>
+                    <span class="trust-badge">Instant Results</span>
+                </div>
+            </div>
+            
+            <div class="hero-background">
+                <div class="background-slideshow" id="heroSlideshow">
+                    <!-- Background images will be loaded via JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Image Generation Section -->
+        <section class="generation-section" id="generator">
+            <div class="generation-container">
+                <!-- Left Panel - Input Controls (40% width) -->
+                <div class="input-panel">
+                    <h2 class="section-title">Generate Your Image</h2>
+                    
+                    <!-- Mode Tabs -->
+                    <div class="mode-tabs">
+                        <button class="tab-button active" data-mode="text-to-image">
+                            Text to Image
+                        </button>
+                        <button class="tab-button" data-mode="image-to-image">
+                            Image to Image
+                        </button>
+                    </div>
+                    
+                    <!-- Text to Image Mode -->
+                    <div class="mode-content active" id="textToImageMode">
+                        <div class="input-group">
+                            <label for="promptInput" class="input-label">Describe your image</label>
+                            <textarea 
+                                id="promptInput" 
+                                class="prompt-input" 
+                                placeholder="A beautiful sunset over mountains with vibrant colors..."
+                                rows="4"
+                            ></textarea>
+                        </div>
+                        
+                        <div class="options-row">
+                            <div class="aspect-ratio-group">
+                                <label class="input-label">Aspect Ratio</label>
+                                <div class="ratio-buttons">
+                                    <button class="ratio-btn active" data-ratio="1:1">1:1</button>
+                                    <button class="ratio-btn" data-ratio="4:3">4:3</button>
+                                    <button class="ratio-btn" data-ratio="3:4">3:4</button>
+                                    <button class="ratio-btn" data-ratio="16:9">16:9</button>
+                                    <button class="ratio-btn" data-ratio="9:16">9:16</button>
+                                </div>
+                            </div>
+                            
+                            <div class="style-group">
+                                <label class="input-label">Style</label>
+                                <div class="style-buttons">
+                                    <button class="style-btn active" data-style="realistic">Realistic</button>
+                                    <button class="style-btn" data-style="artistic">Artistic</button>
+                                    <button class="style-btn" data-style="fantasy">Fantasy</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Image to Image Mode -->
+                    <div class="mode-content" id="imageToImageMode">
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-placeholder">
+                                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7,10 12,15 17,10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <p>Drag & drop an image here or click to browse</p>
+                                <p class="upload-hint">Supports JPG, PNG, WebP (max 10MB)</p>
+                            </div>
+                            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="transformPrompt" class="input-label">Describe the transformation</label>
+                            <textarea 
+                                id="transformPrompt" 
+                                class="prompt-input" 
+                                placeholder="Make it look like a watercolor painting..."
+                                rows="3"
+                            ></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Generate Button -->
+                    <button class="generate-btn" id="generateBtn">
+                        <span class="btn-text">Generate Image</span>
+                        <span class="btn-cost">(1 credit)</span>
+                    </button>
+                </div>
+                
+                <!-- Right Panel - Image Display (60% width) -->
+                <div class="display-panel">
+                    <!-- Default State -->
+                    <div class="display-state default-state active" id="defaultState">
+                        <div class="empty-illustration">
+                            <svg viewBox="0 0 200 150" class="illustration-svg">
+                                <rect x="20" y="30" width="160" height="90" rx="8" fill="#f0f0f0" stroke="#ddd"/>
+                                <circle cx="60" cy="60" r="15" fill="#ccc"/>
+                                <path d="M40 100 L80 70 L120 85 L160 60" stroke="#ccc" stroke-width="3" fill="none"/>
+                            </svg>
+                            <h3>Your AI-generated image will appear here</h3>
+                            <p>Start by describing what you want to create</p>
+                        </div>
+                        
+                        <!-- Featured Gallery -->
+                        <div class="featured-gallery">
+                            <h3>Featured Creations</h3>
+                            <div class="gallery-grid">
+                                <div class="gallery-item">
+                                    <img src="assets/sample-1.jpg" alt="AI generated landscape" loading="lazy">
+                                </div>
+                                <div class="gallery-item">
+                                    <img src="assets/sample-2.jpg" alt="AI generated portrait" loading="lazy">
+                                </div>
+                                <div class="gallery-item">
+                                    <img src="assets/sample-3.jpg" alt="AI generated abstract art" loading="lazy">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Generating State -->
+                    <div class="display-state generating-state" id="generatingState" role="status" aria-live="polite">
+                        <div class="progress-container">
+                            <div class="progress-animation">
+                                <div class="progress-circle" aria-hidden="true"></div>
+                            </div>
+                            <h3>Creating your image...</h3>
+                            <p>This usually takes 10-30 seconds</p>
+                            <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Result State -->
+                    <div class="display-state result-state" id="resultState">
+                        <div class="result-image-container">
+                            <img id="resultImage" class="result-image" alt="Generated image" loading="lazy">
+                        </div>
+                        
+                        <div class="result-actions">
+                            <button class="action-btn download-btn" id="downloadBtn" aria-label="Download generated image">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7,10 12,15 17,10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Download
+                            </button>
+                            
+                            <button class="action-btn regenerate-btn" id="regenerateBtn" aria-label="Generate a new image with the same prompt">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                    <path d="M1 4v6h6"></path>
+                                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                                </svg>
+                                Regenerate
+                            </button>
+                            
+                            <button class="action-btn share-btn" id="shareBtn" aria-label="Share this generated image">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                    <circle cx="18" cy="5" r="3"></circle>
+                                    <circle cx="6" cy="12" r="3"></circle>
+                                    <circle cx="18" cy="19" r="3"></circle>
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                </svg>
+                                Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section class="pricing-section" id="pricing">
+            <div class="container">
+                <h2 class="section-title">Choose Your Plan</h2>
+                <p class="section-subtitle">Start free, upgrade when you need more</p>
+                
+                <div class="pricing-toggle">
+                    <button class="toggle-btn active" data-billing="monthly">Monthly</button>
+                    <button class="toggle-btn" data-billing="yearly">Yearly <span class="discount-badge">Save 20%</span></button>
+                </div>
+                
+                <div class="pricing-grid" id="pricingGrid">
+                    <!-- Pricing cards will be populated via JavaScript -->
+                </div>
+                
+                <div class="credits-section">
+                    <h3 class="credits-title">Or buy credits as needed</h3>
+                    <p class="credits-subtitle">Perfect for occasional use - no subscription required</p>
+                    <div class="credits-packages" id="creditsPackages">
+                        <!-- Credit packages will be populated via JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="free-trial-cta">
+                    <h3>Not ready to commit?</h3>
+                    <p>Try Nano Banana for free with 5 image generations - no credit card required!</p>
+                    <button class="free-trial-btn" id="freeTrialBtn">Start Free Trial</button>
+                </div>
+                
+                <div class="pricing-faq">
+                    <h3>Questions about pricing?</h3>
+                    <p>All plans include unlimited downloads, commercial usage rights, and priority support.</p>
+                    <a href="#faq" class="faq-link">View detailed FAQ →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section" id="features">
+            <div class="container">
+                <h2 class="section-title">Why Choose Nano Banana?</h2>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                            </svg>
+                        </div>
+                        <h3>Lightning Fast</h3>
+                        <p>Generate high-quality images in seconds with our optimized AI models. No waiting, no delays - just instant creativity at your fingertips.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                        </div>
+                        <h3>Premium Quality</h3>
+                        <p>State-of-the-art AI models produce stunning, professional-grade images with incredible detail and artistic flair that rivals human artists.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                        <h3>Secure & Private</h3>
+                        <p>Your images and data are protected with enterprise-grade security. We never store your prompts or share your creations without permission.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section" id="faq">
+            <div class="container">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                
+                <div class="faq-list" id="faqList">
+                    <!-- FAQ items will be populated via JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section class="gallery-section" id="gallery">
+            <div class="container">
+                <h2 class="section-title">Recent Creations</h2>
+                <p class="section-subtitle">See what others are creating with Nano Banana</p>
+                
+                <div class="gallery-scroll" id="galleryScroll">
+                    <!-- Gallery items will be populated via JavaScript -->
+                </div>
+                
+                <div class="popular-prompts">
+                    <h3>Popular Prompts</h3>
+                    <div class="prompt-tags" id="promptTags">
+                        <!-- Popular prompt tags will be populated via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="assets/logo.svg" alt="Nano Banana Logo" class="footer-logo">
+                    <p>Create stunning AI images with ease</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Product</h4>
+                        <a href="#features">Features</a>
+                        <a href="#pricing">Pricing</a>
+                        <a href="#gallery">Gallery</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Support</h4>
+                        <a href="#faq">FAQ</a>
+                        <a href="/contact">Contact</a>
+                        <a href="/help">Help Center</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Legal</h4>
+                        <a href="/privacy">Privacy Policy</a>
+                        <a href="/terms">Terms of Service</a>
+                        <a href="/cookies">Cookie Policy</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Testing</h4>
+                        <a href="test-google-oauth.html">Test OAuth</a>
+                        <a href="test-anonymous-user.html">Test Anonymous</a>
+                        <a href="test-features.html">Test Features</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Nano Banana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/anonymous-user.js"></script>
+    <script src="js/auth-manager.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="js/stripe-manager.js"></script>
+    <script src="js/credits-manager.js"></script>
+    <script src="js/user-manager.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        // 初始化Stripe
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 从环境变量获取Stripe公钥
+                const stripeKey = 'pk_test_51RwvuVDaEmbmcqYy493SnMnCDTAc14V6gPQ81wf4A8iRKYu7WmplUTi7NBLZaKHajb94B2RKclw0nQ8CjQDualOn00JwN5TAH2';
+                await window.stripeManager.initialize(stripeKey);
+                
+                // 绑定定价按钮事件
+                bindPricingButtons();
+            } catch (error) {
+                console.error('Failed to initialize Stripe:', error);
+            }
+        });
+        
+        function bindPricingButtons() {
+            // 订阅计划按钮
+            document.querySelectorAll('[data-plan]').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    
+                    const planType = button.dataset.plan;
+                    
+                    // 检查用户登录状态
+                    if (!window.authManager || !window.authManager.user) {
+                        // 提示用户登录
+                        alert('请先登录以购买订阅计划');
+                        return;
+                    }
+                    
+                    try {
+                        button.disabled = true;
+                        button.textContent = '处理中...';
+                        
+                        await window.stripeManager.createSubscriptionCheckout(
+                            planType,
+                            window.authManager.user.id
+                        );
+                    } catch (error) {
+                        console.error('Subscription checkout failed:', error);
+                        alert('创建支付页面失败，请重试');
+                    } finally {
+                        button.disabled = false;
+                        button.textContent = button.dataset.originalText || '选择计划';
+                    }
+                });
+            });
+            
+            // 积分包按钮
+            document.querySelectorAll('[data-credits]').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    
+                    const packageType = button.dataset.credits;
+                    
+                    // 检查用户登录状态
+                    if (!window.authManager || !window.authManager.user) {
+                        // 提示用户登录
+                        alert('请先登录以购买积分包');
+                        return;
+                    }
+                    
+                    try {
+                        button.disabled = true;
+                        button.textContent = '处理中...';
+                        
+                        await window.stripeManager.createCreditsCheckout(
+                            packageType,
+                            window.authManager.user.id
+                        );
+                    } catch (error) {
+                        console.error('Credits checkout failed:', error);
+                        alert('创建支付页面失败，请重试');
+                    } finally {
+                        button.disabled = false;
+                        button.textContent = button.dataset.originalText || '购买积分';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Assets Directory
+
+This directory will contain:
+- logo.svg - Main logo file
+- favicon.ico - Website favicon
+- apple-touch-icon.png - Apple touch icon
+- og-image.jpg - Open Graph image for social sharing
+- twitter-image.jpg - Twitter card image
+- sample-1.jpg, sample-2.jpg, sample-3.jpg - Sample generated images for gallery
+
+These files will be added in subsequent tasks when implementing the visual assets.
