@@ -286,7 +286,7 @@ class NanoBananaApp {
         console.log('Selecting ratio:', ratio);
         this.selectedRatio = ratio;
         
-        // Update pill style - 清除所有active状态，然后设置选中的
+        // Update pill style
         document.querySelectorAll('.pill-option[data-ratio]').forEach(option => {
             option.classList.remove('active');
         });
@@ -298,7 +298,7 @@ class NanoBananaApp {
         const ratioTexts = document.querySelectorAll('#ratioText, #ratioTextI2I');
         ratioTexts.forEach(textElement => {
             if (textElement) {
-                textElement.textContent = ratio; // 显示用户选择的具体值
+                textElement.textContent = ratio;
             }
         });
     }
@@ -307,7 +307,7 @@ class NanoBananaApp {
         console.log('Selecting style:', style);
         this.selectedStyle = style;
         
-        // Update pill style - 清除所有active状态，然后设置选中的
+        // Update pill style
         document.querySelectorAll('.pill-option[data-style]').forEach(option => {
             option.classList.remove('active');
         });
@@ -321,7 +321,7 @@ class NanoBananaApp {
             if (textElement) {
                 // Capitalize first letter for better display
                 const displayText = style.charAt(0).toUpperCase() + style.slice(1);
-                textElement.textContent = displayText; // 显示用户选择的具体值
+                textElement.textContent = displayText;
             }
         });
     }
