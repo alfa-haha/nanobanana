@@ -5,34 +5,28 @@
       "maxDuration": 300
     }
   },
-  "routes": [
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
     {
-      "src": "/robots.txt",
-      "dest": "/robots.txt"
+      "source": "/pricing",
+      "destination": "/index.html"
     },
     {
-      "src": "/sitemap.xml",
-      "dest": "/sitemap.xml"
+      "source": "/about",
+      "destination": "/index.html"
     },
     {
-      "src": "/pricing",
-      "dest": "/index.html"
+      "source": "/contact",
+      "destination": "/index.html"
     },
     {
-      "src": "/about",
-      "dest": "/index.html"
+      "source": "/account",
+      "destination": "/index.html"
     },
     {
-      "src": "/contact",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/account",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/payment/success",
-      "dest": "/payment-success.html"
+      "source": "/payment/success",
+      "destination": "/payment-success.html"
     }
   ],
   "redirects": [
