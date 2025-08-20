@@ -36,7 +36,7 @@ nano-banana-website/
 
 ## SEO Features
 
-- Canonical URL set to https://nanobanana.com
+- Canonical URL set to https://nanobanana.guru
 - Complete meta tag structure including description and keywords
 - Open Graph tags for social media sharing
 - Twitter Card support
