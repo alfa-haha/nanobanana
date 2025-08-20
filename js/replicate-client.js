@@ -4,10 +4,10 @@
  */
 class ReplicateClient {
     constructor() {
-        this.apiToken = 'YOUR_REPLICATE_API_TOKEN'; // 占位符：需要替换为真实的API Token
+        this.apiToken = 'r8_2huTNlo0e60Tvy6E5KJEh1IBd4hmYwl0Y7wMz'; // 占位符：需要替换为真实的API Token
         this.baseUrl = 'https://api.replicate.com/v1';
-        this.defaultModel = 'stability-ai/stable-diffusion-xl-base-1.0'; // 占位符：替换为你选择的模型
-        this.webhookUrl = 'YOUR_WEBHOOK_URL'; // 占位符：可选的webhook回调URL
+        this.defaultModel = 'qwen/qwen-image'; // 占位符：替换为你选择的模型
+        this.webhookUrl = 'https://nanobanana.guru/webhook/replicate'; // 占位符：可选的webhook回调URL
         
         // 成本监控配置
         this.costTracking = {
@@ -63,8 +63,9 @@ class ReplicateClient {
     async createPrediction(input) {
         try {
             // 检查成本限制
-            if (!this.checkCostLimits()) {
-                throw new Error('已达到成本限制，无法创建新的生成任务');
+            const costCheck = this.checkCostLimits();
+            if (!costCheck.canProceed) {
+                throw new Error(`已达到成本限制: ${costCheck.message}`);
             }
 
             const payload = {
@@ -208,12 +209,12 @@ class ReplicateClient {
     getModelVersion() {
         // 占位符：需要替换为实际的模型版本ID
         // 可以通过 https://api.replicate.com/v1/models/{owner}/{name} 获取最新版本
-        return 'MODEL_VERSION_ID_PLACEHOLDER';
+        return '8101a2391b041aa46c01826321e4b46815624d4a810e16dd6989e2d805e0aea2';
     }
 
     /**
      * 检查成本限制
-     * @returns {boolean} 是否可以继续生成
+     * @returns {Object} 包含是否可以继续和详细信息的对象
      */
     checkCostLimits() {
         const today = new Date().toDateString();
@@ -222,26 +223,45 @@ class ReplicateClient {
         const dailyCost = parseFloat(localStorage.getItem(`dailyCost_${today}`) || '0');
         const monthlyCost = parseFloat(localStorage.getItem(`monthlyCost_${currentMonth}`) || '0');
         
+        // 检查每日限制
         if (dailyCost >= this.costTracking.dailyLimit) {
             console.warn('已达到每日成本限制');
-            return false;
+            return {
+                canProceed: false,
+                message: `已达到每日成本限制 ($${dailyCost.toFixed(2)}/$${this.costTracking.dailyLimit})`
+            };
         }
         
+        // 检查每月限制
         if (monthlyCost >= this.costTracking.monthlyLimit) {
             console.warn('已达到每月成本限制');
-            return false;
+            return {
+                canProceed: false,
+                message: `已达到每月成本限制 ($${monthlyCost.toFixed(2)}/$${this.costTracking.monthlyLimit})`
+            };
         }
         
         // 检查告警阈值
+        let warningMessage = '';
         if (dailyCost >= this.costTracking.dailyLimit * this.costTracking.alertThreshold) {
-            console.warn(`每日成本接近限制: $${dailyCost.toFixed(2)}/$${this.costTracking.dailyLimit}`);
+            warningMessage += `每日成本接近限制: $${dailyCost.toFixed(2)}/$${this.costTracking.dailyLimit}`;
+            console.warn(warningMessage);
         }
         
         if (monthlyCost >= this.costTracking.monthlyLimit * this.costTracking.alertThreshold) {
-            console.warn(`每月成本接近限制: $${monthlyCost.toFixed(2)}/$${this.costTracking.monthlyLimit}`);
+            const monthlyWarning = `每月成本接近限制: $${monthlyCost.toFixed(2)}/$${this.costTracking.monthlyLimit}`;
+            warningMessage += (warningMessage ? '; ' : '') + monthlyWarning;
+            console.warn(monthlyWarning);
         }
         
-        return true;
+        return {
+            canProceed: true,
+            message: warningMessage || '成本检查通过',
+            dailyCost: dailyCost,
+            monthlyCost: monthlyCost,
+            dailyLimit: this.costTracking.dailyLimit,
+            monthlyLimit: this.costTracking.monthlyLimit
+        };
     }
 
     /**
@@ -379,6 +399,69 @@ class ReplicateClient {
         if (webhookData.status === 'succeeded') {
             this.updateCostTracking(webhookData);
         }
+    }
+
+    /**
+     * 生成图片 - 主要的API调用方法
+     * @param {Object} input - 输入参数
+     * @param {string} input.prompt - 文本提示词
+     * @param {number} input.width - 图片宽度（可选，默认1024）
+     * @param {number} input.height - 图片高度（可选，默认1024）
+     * @param {string} input.negative_prompt - 负面提示词（可选）
+     * @param {Function} onProgress - 进度回调函数（可选）
+     * @returns {Promise} 返回生成结果
+     */
+    async generateImage(input, onProgress) {
+        console.log('开始生成图片:', input);
+        
+        // 检查成本限制
+        const costCheck = this.checkCostLimits();
+        if (!costCheck.canProceed) {
+            throw new Error(`成本限制: ${costCheck.message}`);
+        }
+        
+        try {
+            // 创建预测请求
+            const prediction = await this.createPrediction(input);
+            console.log('预测创建成功:', prediction.id);
+            
+            // 跟踪预测
+            this.trackPrediction(prediction.id);
+            
+            // 轮询预测状态直到完成
+            const completedPrediction = await this.pollPrediction(prediction.id, onProgress);
+            
+            console.log('图片生成完成:', completedPrediction);
+            return completedPrediction;
+            
+        } catch (error) {
+            console.error('图片生成失败:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * 简化的生成接口 - 用于快速调用
+     * @param {string} prompt - 提示词
+     * @param {Object} options - 可选参数
+     * @returns {Promise} 返回图片URL
+     */
+    async generate(prompt, options = {}) {
+        const input = {
+            prompt: prompt,
+            width: options.width || 1024,
+            height: options.height || 1024,
+            negative_prompt: options.negative_prompt || ''
+        };
+        
+        const result = await this.generateImage(input, options.onProgress);
+        
+        // 返回图片URL（支持数组或单个URL格式）
+        if (result.output) {
+            return Array.isArray(result.output) ? result.output[0] : result.output;
+        }
+        
+        throw new Error('生成结果中没有找到图片URL');
     }
 }
 

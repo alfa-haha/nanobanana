@@ -51,6 +51,11 @@ app.get('/test/stripe', (req, res) => {
     res.sendFile(path.join(__dirname, 'test-stripe-payment.html'));
 });
 
+// Replicate测试页面
+app.get('/test/replicate', (req, res) => {
+    res.sendFile(path.join(__dirname, 'test-replicate.html'));
+});
+
 // 404处理
 app.use((req, res) => {
     res.status(404).json({
@@ -77,7 +82,20 @@ app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`📊 Credits test: http://localhost:${PORT}/test/credits`);
     console.log(`💳 Stripe test: http://localhost:${PORT}/test/stripe`);
+    console.log(`🎨 Replicate test: http://localhost:${PORT}/test/replicate`);
     console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
+    
+    // 检查关键环境变量
+    console.log('🔧 Environment Configuration:');
+    if (process.env.REPLICATE_API_TOKEN) {
+        console.log('✅ REPLICATE_API_TOKEN configured');
+    } else {
+        console.warn('⚠️  REPLICATE_API_TOKEN not found in environment');
+    }
+    
+    if (process.env.NODE_ENV) {
+        console.log(`📦 NODE_ENV: ${process.env.NODE_ENV}`);
+    }
 });
 
 module.exports = app;

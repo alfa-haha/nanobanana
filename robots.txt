@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Block access to sensitive areas
+Disallow: /api/
+Disallow: /.env*
+Disallow: /node_modules/
+Disallow: /test/
+
+# Allow important pages
+Allow: /
+Allow: /pricing
+Allow: /contact
+Allow: /about
+
+# Sitemap location
+Sitemap: https://nanobanana.guru/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

@@ -1,9 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CLSX4CZ1N"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-9CLSX4CZ1N');
+    </script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>支付成功 - Nano Banana AI</title>
+    <title>Payment Successful - Nano Banana AI</title>
+    <meta name="description" content="Your payment was successful! Thank you for choosing Nano Banana AI. Your account has been upgraded and you can now start creating amazing AI images.">
+    <link rel="canonical" href="https://nanobanana.guru/payment/success">
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/styles.css">
     <style>
@@ -213,41 +225,41 @@
 <body>
     <div class="payment-success">
         <div class="success-card">
-            <!-- 加载状态 -->
+            <!-- Loading State -->
             <div id="loadingState" class="loading">
                 <div class="spinner"></div>
-                <span>正在处理您的支付...</span>
+                <span>Processing your payment...</span>
             </div>
             
-            <!-- 成功状态 -->
+            <!-- Success State -->
             <div id="successState" style="display: none;">
                 <div class="success-icon"></div>
-                <h1 class="success-title">支付成功！</h1>
+                <h1 class="success-title">Payment Successful!</h1>
                 <p class="success-message" id="successMessage">
-                    感谢您的购买，您的账户已成功升级。
+                    Thank you for your purchase. Your account has been successfully upgraded.
                 </p>
                 
                 <div class="payment-details" id="paymentDetails">
-                    <!-- 支付详情将通过JavaScript填充 -->
+                    <!-- Payment details will be populated via JavaScript -->
                 </div>
                 
                 <div class="action-buttons">
-                    <a href="/" class="btn btn-primary">开始创作</a>
-                    <a href="/account" class="btn btn-secondary">查看账户</a>
+                    <a href="/" class="btn btn-primary">Start Creating</a>
+                    <a href="/account" class="btn btn-secondary">View Account</a>
                 </div>
             </div>
             
-            <!-- 错误状态 -->
+            <!-- Error State -->
             <div id="errorState" class="error-state" style="display: none;">
                 <div class="success-icon"></div>
-                <h1 class="success-title">支付处理失败</h1>
+                <h1 class="success-title">Payment Processing Failed</h1>
                 <p class="success-message" id="errorMessage">
-                    很抱歉，支付处理过程中出现了问题。请联系客服或重试。
+                    We're sorry, there was an issue processing your payment. Please contact support or try again.
                 </p>
                 
                 <div class="action-buttons">
-                    <a href="/pricing" class="btn btn-primary">重新购买</a>
-                    <a href="/contact" class="btn btn-secondary">联系客服</a>
+                    <a href="/pricing" class="btn btn-primary">Try Again</a>
+                    <a href="/contact" class="btn btn-secondary">Contact Support</a>
                 </div>
             </div>
         </div>
@@ -268,17 +280,17 @@
             
             async init() {
                 if (!this.sessionId) {
-                    this.showError('缺少支付会话ID');
+                    this.showError('Missing payment session ID');
                     return;
                 }
                 
                 try {
-                    // 处理支付成功
+                    // Handle payment success
                     const result = await window.stripeManager.handlePaymentSuccess(this.sessionId);
                     this.showSuccess(result);
                 } catch (error) {
                     console.error('Payment success handling failed:', error);
-                    this.showError(error.message || '支付处理失败');
+                    this.showError(error.message || 'Payment processing failed');
                 }
             }
             
@@ -286,15 +298,15 @@
                 document.getElementById('loadingState').style.display = 'none';
                 document.getElementById('successState').style.display = 'block';
                 
-                // 更新成功消息
+                // Update success message
                 const messageEl = document.getElementById('successMessage');
                 if (result.type === 'subscription') {
-                    messageEl.textContent = `恭喜！您已成功订阅 ${result.planName}，现在可以开始创作了。`;
+                    messageEl.textContent = `Congratulations! You have successfully subscribed to ${result.planName} and can now start creating.`;
                 } else if (result.type === 'credits') {
-                    messageEl.textContent = `太棒了！您已成功购买 ${result.credits} 积分，现在可以生成更多精美图片了。`;
+                    messageEl.textContent = `Great! You have successfully purchased ${result.credits} credits and can now generate more amazing images.`;
                 }
                 
-                // 填充支付详情
+                // Fill payment details
                 this.fillPaymentDetails(result);
             }
             
@@ -311,39 +323,39 @@
                 if (result.type === 'subscription') {
                     detailsHTML = `
                         <div class="detail-row">
-                            <span class="detail-label">订阅计划</span>
+                            <span class="detail-label">Subscription Plan</span>
                             <span class="detail-value">${result.planName}</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">月度积分</span>
-                            <span class="detail-value credits-highlight">${result.credits} 积分</span>
+                            <span class="detail-label">Monthly Credits</span>
+                            <span class="detail-value credits-highlight">${result.credits} Credits</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">计费周期</span>
-                            <span class="detail-value">每月自动续费</span>
+                            <span class="detail-label">Billing Cycle</span>
+                            <span class="detail-value">Monthly Auto-Renewal</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">支付状态</span>
-                            <span class="detail-value" style="color: #10b981;">✓ 已完成</span>
+                            <span class="detail-label">Payment Status</span>
+                            <span class="detail-value" style="color: #10b981;">✓ Completed</span>
                         </div>
                     `;
                 } else if (result.type === 'credits') {
                     detailsHTML = `
                         <div class="detail-row">
-                            <span class="detail-label">购买类型</span>
-                            <span class="detail-value">积分包</span>
+                            <span class="detail-label">Purchase Type</span>
+                            <span class="detail-value">Credit Pack</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">获得积分</span>
-                            <span class="detail-value credits-highlight">${result.credits} 积分</span>
+                            <span class="detail-label">Credits Received</span>
+                            <span class="detail-value credits-highlight">${result.credits} Credits</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">支付方式</span>
-                            <span class="detail-value">一次性付款</span>
+                            <span class="detail-label">Payment Method</span>
+                            <span class="detail-value">One-time Payment</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">支付状态</span>
-                            <span class="detail-value" style="color: #10b981;">✓ 已完成</span>
+                            <span class="detail-label">Payment Status</span>
+                            <span class="detail-value" style="color: #10b981;">✓ Completed</span>
                         </div>
                     `;
                 }
@@ -352,7 +364,7 @@
             }
         }
         
-        // 页面加载完成后初始化
+        // Initialize after page loads
         document.addEventListener('DOMContentLoaded', () => {
             new PaymentSuccessHandler();
         });

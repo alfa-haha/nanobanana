@@ -217,6 +217,9 @@ class NanoBananaApp {
         this.checkAuthStatus();
         
         console.log('Components initialized successfully');
+        
+        // Initialize use case gallery
+        this.initUseCaseGallery();
     }
     
     updatePillTexts() {
@@ -326,9 +329,145 @@ class NanoBananaApp {
         });
     }
     
-    handleGenerate() {
+    async handleGenerate() {
         console.log('Generate button clicked');
-        alert('Generate functionality would be called here');
+        
+        if (this.isGenerating) {
+            console.log('Generation already in progress');
+            return;
+        }
+        
+        const prompt = document.getElementById('promptInput')?.value.trim() || 
+                      document.getElementById('transformPrompt')?.value.trim();
+        
+        if (!prompt) {
+            alert('请输入提示词');
+            return;
+        }
+        
+        this.isGenerating = true;
+        const generateBtn = document.getElementById('generateBtn');
+        
+        try {
+            // 更新按钮状态
+            if (generateBtn) {
+                generateBtn.disabled = true;
+                generateBtn.textContent = '生成中...';
+            }
+            
+            // 构建请求参数
+            const requestData = {
+                prompt: prompt,
+                width: this.getRatioWidth(),
+                height: this.getRatioHeight(),
+                negative_prompt: ''
+            };
+            
+            console.log('Sending generation request:', requestData);
+            
+            // 调用后端API
+            const response = await fetch('/api/replicate/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                console.log('Generation successful:', result.data);
+                this.displayGeneratedImage(result.data);
+            } else {
+                throw new Error(result.error?.message || '生成失败');
+            }
+            
+        } catch (error) {
+            console.error('Generation error:', error);
+            alert(`生成失败: ${error.message}`);
+        } finally {
+            this.isGenerating = false;
+            
+            // 恢复按钮状态
+            if (generateBtn) {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate';
+            }
+        }
+    }
+    
+    getRatioWidth() {
+        if (!this.selectedRatio) return 1024;
+        
+        switch (this.selectedRatio) {
+            case 'landscape':
+            case '4:3':
+                return 1024;
+            case 'portrait':
+            case '3:4':
+                return 768;
+            case 'square':
+            case '1:1':
+            default:
+                return 1024;
+        }
+    }
+    
+    getRatioHeight() {
+        if (!this.selectedRatio) return 1024;
+        
+        switch (this.selectedRatio) {
+            case 'landscape':
+            case '4:3':
+                return 768;
+            case 'portrait':
+            case '3:4':
+                return 1024;
+            case 'square':
+            case '1:1':
+            default:
+                return 1024;
+        }
+    }
+    
+    displayGeneratedImage(imageData) {
+        console.log('Displaying generated image:', imageData);
+        
+        // Create or update image display area
+        let imageContainer = document.getElementById('generatedImageContainer');
+        if (!imageContainer) {
+            imageContainer = document.createElement('div');
+            imageContainer.id = 'generatedImageContainer';
+            imageContainer.style.cssText = `
+                margin: 20px 0;
+                padding: 20px;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                background: #fafafa;
+                text-align: center;
+            `;
+            
+            // Insert after the generate button
+            const generateBtn = document.getElementById('generateBtn');
+            if (generateBtn) {
+                generateBtn.parentNode.insertBefore(imageContainer, generateBtn.nextSibling);
+            }
+        }
+        
+        imageContainer.innerHTML = `
+            <h4>生成结果</h4>
+            <img src="${imageData.imageUrl}" 
+                 alt="Generated Image" 
+                 style="max-width: 100%; max-height: 400px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);" 
+                 onload="console.log('Image loaded successfully')" 
+                 onerror="console.error('Image failed to load')">
+            <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                <p>提示词: ${imageData.prompt}</p>
+                <p>状态: ${imageData.status}</p>
+                <p>完成时间: ${imageData.completedAt ? new Date(imageData.completedAt).toLocaleString() : '未知'}</p>
+            </div>
+        `;
     }
     
     handleLogin() {
@@ -416,7 +555,90 @@ class NanoBananaApp {
             }
         }
     }
+    
+    initUseCaseGallery() {
+        console.log('Initializing use case showcase...');
+        
+        const showcaseContainer = document.getElementById('showcaseContainer');
+        
+        if (!showcaseContainer) {
+            console.log('Showcase container not found');
+            return;
+        }
+        
+        const showcases = showcaseContainer.querySelectorAll('.use-case-showcase');
+        
+        if (showcases.length === 0) {
+            console.log('No showcase cases found');
+            return;
+        }
+        
+        // All showcases are displayed by default (no need for active/inactive states)
+        // Just log the initialization
+        console.log(`Showcase initialized with ${showcases.length} cases displayed vertically`);
+        
+        // Log each case for debugging
+        showcases.forEach((showcase, index) => {
+            const caseType = showcase.dataset.case;
+            console.log(`Case ${index + 1}: ${caseType}`);
+        });
+    }
 }
+
+// Social sharing functionality
+function initSocialSharing() {
+    document.querySelectorAll('[data-share]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const platform = this.getAttribute('data-share');
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.title);
+            const description = encodeURIComponent('Create amazing AI-generated images that match your content\'s emotional tone - Nano Banana');
+            
+            let shareUrl = '';
+            
+            switch(platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                    break;
+                case 'reddit':
+                    shareUrl = `https://reddit.com/submit?url=${url}&title=${title}`;
+                    break;
+                case 'tiktok':
+                    // TikTok doesn't have a direct share URL, so we copy to clipboard
+                    navigator.clipboard.writeText(window.location.href).then(() => {
+                        showNotification('Link copied to clipboard! Share it on TikTok', 'success');
+                    }).catch(() => {
+                        showNotification('Unable to copy link. Please copy manually: ' + window.location.href, 'info');
+                    });
+                    return;
+            }
+            
+            if (shareUrl) {
+                // Open share window
+                const shareWindow = window.open(
+                    shareUrl,
+                    'share',
+                    'width=600,height=400,scrollbars=yes,resizable=yes'
+                );
+                
+                // Add visual feedback
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            }
+        });
+    });
+}
+
+// Initialize social sharing when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initSocialSharing();
+});
 
 // Export for potential module usage
 if (typeof module !== 'undefined' && module.exports) {

@@ -9,10 +9,12 @@ const router = express.Router();
 // 导入处理器
 const StripeHandler = require('./stripe-handler');
 const CreditsAPI = require('./credits-api');
+const ReplicateHandler = require('./replicate-handler');
 
 // 创建处理器实例
 const stripeHandler = new StripeHandler();
 const creditsAPI = new CreditsAPI();
+const replicateHandler = new ReplicateHandler();
 
 // 中间件：验证JWT token
 const authenticateToken = (req, res, next) => {
@@ -132,6 +134,48 @@ router.use((error, req, res, next) => {
             code: error.code || 'INTERNAL_ERROR'
         }
     });
+});
+
+// Replicate AI 图片生成相关路由
+router.post('/replicate/generate', async (req, res) => {
+    try {
+        const { prompt, width, height, negative_prompt } = req.body;
+        
+        if (!prompt) {
+            return res.status(400).json({
+                success: false,
+                error: { message: '提示词不能为空' }
+            });
+        }
+        
+        const result = await replicateHandler.generateImage({
+            prompt,
+            width: width || 1024,
+            height: height || 1024,
+            negative_prompt: negative_prompt || ''
+        });
+        
+        res.json(result);
+        
+    } catch (error) {
+        console.error('Replicate API错误:', error);
+        res.status(500).json({
+            success: false,
+            error: { message: '服务器内部错误' }
+        });
+    }
+});
+
+router.get('/replicate/health', async (req, res) => {
+    try {
+        const health = await replicateHandler.healthCheck();
+        res.json(health);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: { message: '健康检查失败' }
+        });
+    }
 });
 
 module.exports = router;
